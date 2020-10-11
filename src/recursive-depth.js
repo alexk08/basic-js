@@ -1,31 +1,31 @@
+//перебираем массив forEach-ом, если текущий элемент массив, то делаем ретёрн и запускаем эту же функцию, если нет, то двигаемся дальше
+
 const CustomError = require("../extensions/custom-error");
 
 module.exports = class DepthCalculator {
-    calculateDepth(arr) {
-        let count = 1;
-        foo(arr);
-        function foo(array) {
-            // let newArr = [];
-            for (let i = 0; i < array.length; i++) {
-                const element = array[i];
-                if (Array.isArray(element)) {
-                    // newArr.push(element);
-                    count++;
-                    for (let j = 0; j < element.length; j++) {
-                        // const element = array[j];
-                        return foo(element);
-                    }
-                } 
-            }
-            // if (newArr.length >= 1) {
-            //     count++;
-            //     for (let i = 0; i < newArr.length; i++) {
-            //         return foo(newArr[i]);
-            //     }
-            // } else {
-            //     return count;
-            // }
+  calculateDepth(arr) {
+    function check (array) {
+      let result = false;
+      array.forEach(element => {
+        if (Array.isArray(element)) {
+          result = true;
         }
-        return count;
+      });
+      return result;
     }
-};
+    let count = 2;
+    function foo (arr) {
+      let newArr = arr.reduce(
+        (result, element) => result.concat(element),
+        []
+      );
+      if (check(newArr)) {
+        count++
+        return foo(newArr);
+      }
+      return count;
+    }
+    if (!check(arr)) return 1;
+    return foo(arr);
+  }
+}
