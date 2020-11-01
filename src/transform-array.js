@@ -4,50 +4,26 @@ module.exports = function transform(initArr) {
     if (!Array.isArray(initArr)) {
       throw Error;
     }
+
     if (initArr.length === 0) {
       return [];
     }
-    let transformArr = initArr.slice();
+
+    let transformArr = [];
   
-    for (let i = 0; i < transformArr.length; i++) {
-      if (transformArr[i] === '--double-next') {
-        if (i+1 !== transformArr.length) {
-          transformArr.splice((i), 1, transformArr[i+1]);
-        } else {
-          transformArr.splice((i), 1);
-        }
-      } else if (transformArr[i] === '--double-prev') {
-        if (i !== 0) {
-          transformArr.splice((i), 1, transformArr[i-1]);
-        } else {
-          transformArr.splice((i), 1);
-        }
-      } 
-    // }
-  
-    // for (let i = 0; i < transformArr.length; i++) {
-      else if (transformArr[i] === '--discard-next') {
-        if (i+1 !== transformArr.length) {
-          transformArr.splice((i), 2);
-        //   i = i-1;
-        } else {
-          transformArr.splice((i), 1);
-        }
-      } else if (transformArr[i] === '--discard-prev') {
-        if (i !== 0) {
-          transformArr.splice((i-1), 2);
-        //   i = i-1;
-        } else {
-          transformArr.splice((i), 1);
-        }
+    for (let i = 0; i < initArr.length; i++) {
+      if (initArr[i] === '--discard-next' && i !== (initArr.length - 1)) {
+        i++;
+      } else if (initArr[i] === '--discard-prev' && initArr[i - 2] !== '--discard-next' && i !== 0) {
+        transformArr.pop();
+      } else if (initArr[i] === '--double-next' && i !== (initArr.length - 1)) {
+        transformArr.push(initArr[i + 1])
+      } else if (initArr[i] === '--double-prev' && initArr[i - 2] !== '--discard-next' && i !== 0) {
+        transformArr.push(initArr[i - 1])
+      } else if (initArr[i] !== '--discard-next' && initArr[i] !== '--discard-prev' && initArr[i] !== '--double-next' && initArr[i] !== '--double-prev') {
+        transformArr.push(initArr[i]);
       }
     }
 
-    for (let i = 0; i < transformArr.length; i++) {
-        if ((transformArr[i] === '--double-next') || (transformArr[i] === '--double-prev') || (transformArr[i] === '--discard-next') || (transformArr[i] === '--discard-prev')) {
-            transformArr.splice((i), 1);
-        }
-    }
-    // console.log(initArr);
     return transformArr;
   };
